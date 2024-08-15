@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
-from typing import List, Optional
+from typing import List
 from pydantic import ValidationError
 from app.models.journal import JournalEntryCreate, JournalEntry, JournalEntryUpdate
 from app.services.journal import create_journal_entry, get_journal_entry, update_journal_entry, delete_journal_entry, get_all_journal_entries
