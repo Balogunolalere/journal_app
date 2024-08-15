@@ -108,6 +108,10 @@ The API documentation is available at `/api/docs` (Swagger UI) and `/api/redoc` 
 
 - `GET /journal/search`: Search journal entries
 
+### Summarize
+
+- `POST /summarization/summarize`: Summarize the entry
+
 ## Security
 
 - Passwords are securely hashed before storage
