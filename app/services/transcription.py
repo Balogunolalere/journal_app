@@ -1,29 +1,33 @@
 from groq import Groq
 from app.core.config import settings
-import os
+import tempfile
 
+# Define constants
+GROQ_API_KEY = settings.GROQ_API_KEY
+MODEL = "whisper-large-v3"
+RESPONSE_FORMAT = "verbose_json"
 
-client = Groq(api_key=settings.GROQ_API_KEY)
+# Initialize the Groq client
+client = Groq(api_key=GROQ_API_KEY)
 
 def transcribe_audio(file, filename):
-    # Generate a temporary file name
-    temp_filename = f"temp_{filename}"
-    
+    """Transcribe an audio file using the Groq API."""
     try:
-        # Write the bytes content to a temporary file
-        with open(temp_filename, "wb") as temp_file:
+        # Create a temporary file
+        with tempfile.NamedTemporaryFile(suffix=filename) as temp_file:
+            # Write the bytes content to the temporary file
             temp_file.write(file)
-        
-        # Open the file in binary read mode
-        with open(temp_filename, "rb") as audio_file:
-            transcription = client.audio.transcriptions.create(
-                file=audio_file,
-                model="whisper-large-v3",
-                response_format="verbose_json",
-            )
+            temp_file.seek(0)
+            
+            # Open the file in binary read mode
+            with open(temp_file.name, "rb") as audio_file:
+                transcription = client.audio.transcriptions.create(
+                    file=audio_file,
+                    model=MODEL,
+                    response_format=RESPONSE_FORMAT,
+                )
         
         return transcription.text
-    finally:
-        # Clean up the temporary file
-        if os.path.exists(temp_filename):
-            os.remove(temp_filename)
+    except Exception as e:
+        # Handle any exceptions that occur during transcription
+        raise Exception(f"Error transcribing audio: {str(e)}")
